@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { UTCTimestamp } from "lightweight-charts";
 
 type Candle = {
-  time: number;
+  time: UTCTimestamp;
   open: number;
   high: number;
   low: number;
@@ -23,7 +24,7 @@ export const useBinanceKlines = (
 ): { candles: Candle[]; certError: boolean } => {
   const [candles, setCandles] = useState<Candle[]>([]);
   const [certError, setCertError] = useState(false);
-  const lastCandleTime = useRef<number | null>(null);
+  const lastCandleTime = useRef<UTCTimestamp | null>(null);
 
   const wsUrl = useMemo(() => {
     if (!symbol) return null;
@@ -58,7 +59,7 @@ export const useBinanceKlines = (
 
         if (!isActive) return;
         const snapshot = data.map((item) => ({
-          time: Math.floor(item[0] / 1000),
+          time: Math.floor(item[0] / 1000) as UTCTimestamp,
           open: Number.parseFloat(item[1]),
           high: Number.parseFloat(item[2]),
           low: Number.parseFloat(item[3]),
@@ -96,7 +97,7 @@ export const useBinanceKlines = (
         const kline = message?.k;
         if (!kline) return;
 
-        const time = Math.floor(kline.t / 1000);
+        const time = Math.floor(kline.t / 1000) as UTCTimestamp;
         const candle: Candle = {
           time,
           open: Number.parseFloat(kline.o),

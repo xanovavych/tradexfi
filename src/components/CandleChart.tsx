@@ -36,6 +36,8 @@ type MaSettings = {
   hma: MaConfig;
 };
 
+type ChartTime = Candle["time"];
+
 const DEFAULT_MA_SETTINGS: MaSettings = {
   sma: { enabled: true, period: 20 },
   ema: { enabled: true, period: 20 },
@@ -244,7 +246,7 @@ export default function CandleChart({
   }, [takeProfit]);
 
   const computeSma = (data: Candle[], period: number) => {
-    const result: { time: number; value: number }[] = [];
+    const result: { time: ChartTime; value: number }[] = [];
     let sum = 0;
     for (let i = 0; i < data.length; i += 1) {
       sum += data[i].close;
@@ -259,7 +261,7 @@ export default function CandleChart({
   };
 
   const computeEma = (data: Candle[], period: number) => {
-    const result: { time: number; value: number }[] = [];
+    const result: { time: ChartTime; value: number }[] = [];
     const multiplier = 2 / (period + 1);
     let ema = 0;
     for (let i = 0; i < data.length; i += 1) {
@@ -277,7 +279,7 @@ export default function CandleChart({
   };
 
   const computeVwma = (data: Candle[], period: number) => {
-    const result: { time: number; value: number }[] = [];
+    const result: { time: ChartTime; value: number }[] = [];
     let sumPV = 0;
     let sumV = 0;
     for (let i = 0; i < data.length; i += 1) {
@@ -362,7 +364,7 @@ export default function CandleChart({
       const enabled = maSettings[key].enabled;
       series.applyOptions({ visible: enabled });
       if (enabled) {
-        series.setData(maData[key] as { time: number; value: number }[]);
+        series.setData(maData[key]);
       }
     });
   }, [maSettings, maData]);
